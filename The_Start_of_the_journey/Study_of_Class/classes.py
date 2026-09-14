@@ -20,5 +20,5 @@ def main():
 
     for emp in employees:
         print(f"{emp.name} is currently {emp.age} and a {emp.position} with a salary of {emp.salary  }")
-
+        print(emp.name)
 main()
