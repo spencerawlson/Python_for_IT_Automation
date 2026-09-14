@@ -1,2 +1,0 @@
-SaaS - Software as a Service
-IaC - Infrastructure as Code
