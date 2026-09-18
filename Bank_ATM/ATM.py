@@ -1,66 +1,152 @@
-pin = int(input('Please choose a PIN:\n'))
 
-attempt = 0
-trans_his = []
+# ATM BANKING SYSTEM
 
-while attempt < 3:
-    pin_customer = int(input('Enter your PIN:\n'))
-    if pin_customer == pin:
-        print('PIN accepted!')
-        break
+def select_bank():
+    print('Welcome to the ATM Banking System!')
+    print('1 - CIBC')
+    print('2 - RBC')
+    print('3 - Bank of Montreal')
+
+    while True:
+        bank = input('Select your bank: ')
+
+        if bank == '1':
+            return 'CIBC'
+        elif bank == '2':
+            return 'RBC'
+        elif bank == '3':
+            return 'Bank of Montreal'
+        else:
+            print('Invalid bank.')
+
+
+def verify_pin():
+    pin = input('Please choose a PIN: ')
+
+    for attempt in range(3):
+        customer_pin = input('Enter your PIN: ')
+
+        if customer_pin == pin:
+            print('PIN accepted!')
+            return True
+
+        print('Incorrect PIN.')
+        print(f'{2 - attempt} attempts remaining.')
+
+    print('Account BLOCKED.')
+    return False
+
+
+def deposit(balance, history):
+    amount = float(input('Deposit amount: '))
+
+    if amount <= 0:
+        print('Invalid amount.')
     else:
-        attempt = attempt + 1
-        print('Incorrect PIN')
-        if attempt < 3:
-            print(f'You have {3 - attempt} attempts remaining.')
-if attempt == 3:
-    print('Account BLOCKED. Too many incorrect PIN attempts.')
-else:
+        balance += amount
+        history.append(f'Deposited ${amount:.2f}')
+        print(f'New balance: ${balance:.2f}')
+
+    return balance
+
+
+def withdraw(balance, history):
+    amount = float(input('Withdrawal amount: '))
+
+    if amount <= 0:
+        print('Invalid amount.')
+    elif amount > balance:
+        print('Insufficient funds.')
+    else:
+        balance -= amount
+        history.append(f'Withdrew ${amount:.2f}')
+        print(f'New balance: ${balance:.2f}')
+
+    return balance
+
+
+def direct_deposit():
+    print('\n1 - CIBC')
+    print('2 - RBC')
+    print('3 - Bank of Montreal')
+
+    bank = input('Select receiving bank: ')
+
+    if bank == '1':
+        bank = 'CIBC'
+    elif bank == '2':
+        bank = 'RBC'
+    elif bank == '3':
+        bank = 'Bank of Montreal'
+    else:
+        print('Invalid bank.')
+        return None
+
+    account = input('Enter 8-character account number: ')
+
+    if len(account) != 8:
+        print('Account number must have 8 characters.')
+        return None
+
+    transit = input('Enter 3-digit transit number: ')
+
+    if len(transit) != 3 or not transit.isascii() or not transit.isdigit():
+        print('Transit number must have exactly 3 digits.')
+        return None
+
+    print('Direct Deposit information saved successfully!')
+
+    return [bank, account, transit]
+
+
+# MAIN PROGRAM
+
+bank = select_bank()
+print(f'Welcome to {bank}!')
+
+if verify_pin():
+
     balance = 1000.00
-
-    print(f'Your current balance is: ${balance:.2f}')
-
-    print(
-        '1 - Deposit\n'
-        '2 - Withdraw\n'
-        '3 - Check Balance\n'
-        '4 - View Transaction History\n'
-        '5 - Exit\n'
-    )
+    history = []
+    deposit_info = None
 
     while True:
 
-        option = int(input('What would you like to do? '))
+        print('\n--- ATM MENU ---')
+        print('1 - Deposit')
+        print('2 - Withdraw')
+        print('3 - Check Balance')
+        print('4 - Transaction History')
+        print('5 - Direct Deposit')
+        print('6 - Exit')
 
-        if option == 1:
-            deposit = float(input('How much would you like to deposit? '))
-            if deposit <= 0:
-                print('Cannot deposit zero or a negative amount')
-            else:
-                balance = balance + deposit
-                trans_his.append(f'Deposited ${deposit:.2f}')
-                print(f'Your new balance is: ${balance:.2f}')
-        elif option == 2:
-            withdraw = float(input('How much would you like to withdraw? '))
-            if withdraw <= 0:
-                print('Cannot withdraw zero or a negative amount')
-            elif withdraw > balance:
-                print('Insufficient Funds')
-            else:
-                balance = balance - withdraw
-                trans_his.append(f'Withdrew ${withdraw:.2f}')
-                print(f'Your new balance is: ${balance:.2f}')
-        elif option == 3:
-            print(f'Your current balance is: ${balance:.2f}')
-        elif option == 4:
-            print('\n--- Transaction History ---')
-            if len(trans_his) == 0:
+        option = input('Choose an option: ')
+
+        if option == '1':
+            balance = deposit(balance, history)
+
+        elif option == '2':
+            balance = withdraw(balance, history)
+
+        elif option == '3':
+            print(f'Balance: ${balance:.2f}')
+
+        elif option == '4':
+            if len(history) == 0:
                 print('No transactions yet.')
             else:
-                for transaction in trans_his:
+                for transaction in history:
                     print(transaction)
-        elif option == 5:
-            print('Thank you for using the banking system.')
+
+        elif option == '5':
+            info = direct_deposit()
+
+            if info is not None:
+                deposit_info = info
+
+        elif option == '6':
+            print('Thank you for banking with us!')
             break
+
         else:
-            print('Invalid option. Please choose between 1 and 4.')
+            print('Invalid option.')
