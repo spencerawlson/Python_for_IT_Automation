@@ -1,0 +1,4 @@
+# Customer ID|Name|PIN|Account Number|Balance
+R001|David Wilson|4567|22345678|1500.00
+R002|Emily Davis|5678|22345679|3000.00
+R003|James Miller|6789|22345680|7500.00

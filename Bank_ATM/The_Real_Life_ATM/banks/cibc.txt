@@ -1,0 +1,4 @@
+# Customer ID|Name|PIN|Account Number|Balance
+C001|John Smith|1234|12345678|1000.00
+C002|Sarah Johnson|2345|12345679|2500.00
+C003|Michael Brown|3456|12345680|5000.00
