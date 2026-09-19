@@ -1,0 +1,8 @@
+2026-09-19 16:21:54 | CIBC | Account: 12345678 | Deposit | $250.00 | Balance: $1250.00
+2026-09-19 16:21:54 | CIBC | Account: 12345678 | Withdrawal | $60.00 | Balance: $1190.00
+2026-09-19 16:26:53 | CIBC | Account: 12345678 | Withdrawal | $60.00 | Balance: $940.00
+2026-09-19 16:27:33 | CIBC | Account: 12345678 | Withdrawal | $60.00 | Balance: $940.00
+2026-09-19 16:29:30 | CIBC | Account: 12345678 | Withdrawal | $60.00 | Balance: $940.00
+2026-09-19 16:30:08 | CIBC | Account: 12345678 | Withdrawal | $60.00 | Balance: $940.00
+2026-09-19 16:48:23 | CIBC | Account: 12345678 | Withdrawal | $60.00 | Balance: $940.00
+2026-09-19 16:55:16 | CIBC | Account: 12345678 | Deposit | $5000.00 | Balance: $6000.00

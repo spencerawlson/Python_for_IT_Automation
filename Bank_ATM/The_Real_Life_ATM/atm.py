@@ -1,185 +1,86 @@
-from bank import Bank
+"""Simple terminal ATM (the original interface), now on the clean backend.
+
+This still works exactly like before, but the logic now lives in atm_service /
+Account / Bank, so the Pygame game (atm_game.py) and this CLI share one backend.
+Run the graphical version with:  python atm_game.py
+"""
+from atm_service import AtmService, ATMError
+
 
 def main():
-
-    # -----------------------------------------
-    # Create the banks
-    # -----------------------------------------
-
-    cibc = Bank(
-        "CIBC",
-        "banks/cibc.txt",
-        "transactions/cibc_transactions.txt"
-    )
-
-    rbc = Bank(
-        "RBC",
-        "banks/rbc.txt",
-        "transactions/rbc_transactions.txt"
-    )
-    bmo = Bank(
-        "Bank of Montreal",
-        "banks/bmo.txt",
-        "transactions/bmo_transactions.txt"
-    )
-
-    # -------------------------------------------
-    # Select the bank
-    # -------------------------------------------
+    svc = AtmService()
+    banks = svc.banks()
 
     print("====================================")
     print("            ATM MACHINE")
-    print("====================================")
+    print("====================================\n")
+    print("Select your bank\n")
+    for i, (name, _bank) in enumerate(banks, 1):
+        print(f"{i}. {name}")
 
-    print()
-    print('Select your bank')
-    print()
-    print("1. CIBC")
-    print('2. RBC')
-    print('3. Bank of Montreal')
-
-    choice =input("\nEnter your choice: ")
-
-    if choice == "1":
-        bank = cibc
-    elif choice == "2":
-        bank = rbc
-    elif choice == "3":
-        bank = bmo
-    else:
+    choice = input("\nEnter your choice: ").strip()
+    if not choice.isdigit() or not (1 <= int(choice) <= len(banks)):
         print("Invalid bank selection")
         return
+    bank_name, bank = banks[int(choice) - 1]
 
-    # -------------------------------------------
-    # Customer ID
-    # -------------------------------------------
-
-    print()
-    print("====================================")
-    print(f"            {bank.name}")
-    print("====================================")
+    print(f"\n====================================")
+    print(f"            {bank_name}")
+    print(f"====================================")
 
     customer_id = input("\nEnter Customer ID: ")
-
-    # -------------------------------------------
-    # Find customer in selected bank
-    # -------------------------------------------
-
-    customer, account = bank.find_customer(customer_id)
-
+    customer, account = svc.login(bank, customer_id)
     if customer is None:
-        print()
-        print(f"Customer not found at {bank.name}.")
+        print(f"\nCustomer not found at {bank_name}.")
         return
 
-    # -------------------------------------------
-    # Welcome customer
-    # -------------------------------------------
+    print(f"\nWelcome, {customer.name}!")
 
-    print()
-    print(f"Welcome, {customer.name}!")
-
-    # -------------------------------------------
-    # PIN Authentication - 3 attemps
-    # -------------------------------------------
-
+    # PIN authentication - 3 attempts
     attempts = 0
-
     while True:
-
-        entered_pin = input("\nEnter your PIN: ")
-
-        if customer.verify_pin(entered_pin):
-            print("\nAuthenticaton successful.")
+        if svc.verify_pin(customer, input("\nEnter your PIN: ")):
+            print("\nAuthentication successful.")
             break
-
         attempts += 1
         remaining = 3 - attempts
-
         if attempts == 3:
-            print()
-            print("Incorrect PIN.")
-            print("Maximum PIN attempts reached.")
-            print("Transaction cancelled.")
+            print("\nIncorrect PIN.\nMaximum PIN attempts reached.\nTransaction cancelled.")
             return
-        else:
-            print("Incorrect PIN.")
-            print(f"You have {remaining} attempt(s) remaining.")
-    # -------------------------------------------
-    # Authentication Successful
-    # -------------------------------------------
+        print(f"Incorrect PIN.\nYou have {remaining} attempt(s) remaining.")
 
-    print()
-    print(f"Bank: {bank.name}")
+    print(f"\nBank: {bank_name}")
     print(f"Account: {account.account_number}")
     print(f"Balance: ${account.balance:.2f}")
 
-    # -------------------------------------------
-    # Transaction menu
-    # -------------------------------------------
-
-    print()
-    print("====================================")
+    print("\n====================================")
     print("           TRANSACTIONS")
     print("====================================")
-
     print("1. Check Balance")
     print("2. Deposit")
     print("3. Withdraw")
     print("4. Exit")
 
-    transaction = input("\nChoose a transaction: ")
+    transaction = input("\nChoose a transaction: ").strip()
 
-    if transaction == "1":
+    try:
+        if transaction == "1":
+            print(f"\nYour balance is ${svc.check_balance(account):.2f}")
+        elif transaction == "2":
+            amount = float(input("Enter deposit amount: $"))
+            print(f"\nDeposit successful\nNew balance: ${svc.deposit(account, amount):.2f}")
+        elif transaction == "3":
+            amount = float(input("Enter withdrawal amount: $"))
+            print(f"\nWithdrawal successful.\nNew balance: ${svc.withdraw(account, amount):.2f}")
+        elif transaction == "4":
+            print("\nThank you for using the ATM.")
+        else:
+            print("Invalid transaction.")
+    except ValueError:
+        print("Please enter a valid amount.")
+    except ATMError as e:
+        print(f"\n{e}")
 
-        print()
-        print(f"Your balance is ${account.check_balance():.2f}")
-
-    elif transaction == "2":
-
-        try:
-            amount = float(
-                input("Enter deposit amount: $")
-            )
-
-            if account.deposit(
-                amount, bank.transaction_file
-            ):
-                print()
-                print("Deposit sucessful")
-                print(f"New balance: ${account.balance:.2f}")
-
-        except ValueError:
-            print("Please enter a valid amount.")
-
-    elif transaction == "3":
-
-        try:
-            amount = float(
-                input("Enter withdrawal amount: $")
-            )
-
-            if account.withdraw(
-                amount,
-                bank.transaction_file
-            ):
-                print()
-                print("Withdrawal successful.")
-                print(f"New balance: ${account.balance:.2f}")
-        except ValueError:
-            print("Please enter a valid amount.")
-
-    elif transaction == "4":
-
-        print()
-        print("Thank you for using the ATM.")
-
-    else:
-        print("Invalid transaction.")
-
-# -------------------------------------------
-# Program entry point
-# -------------------------------------------
 
 if __name__ == "__main__":
-    main() 
+    main()

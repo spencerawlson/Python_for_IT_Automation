@@ -1,0 +1,3 @@
+# The Real-Life ATM - dependencies
+# Only the graphical game needs a package; the terminal CLI is pure standard library.
+pygame-ce>=2.5.0

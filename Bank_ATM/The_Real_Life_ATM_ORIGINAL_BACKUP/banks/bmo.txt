@@ -1,0 +1,4 @@
+# Customer ID|Name|PIN|Account Number|Balance
+B001|Robert Taylor|7890|32345678|2000.00
+B002|Jessica Anderson|8901|32345679|4500.00
+B003|Daniel Thomas|9012|32345680|8000.00
